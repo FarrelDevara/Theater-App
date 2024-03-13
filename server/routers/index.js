@@ -15,4 +15,6 @@ router.use(authentication);
 
 router.get("/getMovies", Controller.fetchMovies);
 
+
+
 module.exports = router;
