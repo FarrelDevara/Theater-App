@@ -1,6 +1,6 @@
 const { JsonWebTokenError } = require("jsonwebtoken");
 
-const errHandler = (error, req, res) => {
+const errHandler = (error, req, res,next) => {
   switch (error.name) {
     case "SequelizeValidationError":
       res.status(400).json({ message: error.errors[0].message });

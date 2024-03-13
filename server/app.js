@@ -1,22 +1,17 @@
-const express = require('express')
-const Controller = require('./controllers/controller')
-const errHandler = require('./middlewares/errHandler')
-const app = express()
-const port = 3000
+const express = require("express");
 
-app.use(express.urlencoded({extended:true}))
-app.use(express.json())
+const errHandler = require("./middlewares/errHandler");
+const app = express();
 
-app.post('/register', Controller.Register)
+const cors = require("cors");
+const router = require("./routers");
+app.use(cors());
 
-app.post('/login', Controller.Login)
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-  })
+app.use(router);
 
-app.use(errHandler)
+app.use(errHandler);
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+module.exports = app;
