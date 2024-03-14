@@ -1,12 +1,12 @@
 const { JsonWebTokenError } = require("jsonwebtoken");
 
-const errHandler = (error, req, res,next) => {
+const errHandler = (error, req, res, next) => {
   switch (error.name) {
     case "SequelizeValidationError":
       res.status(400).json({ message: error.errors[0].message });
       break;
     case "SequelizeUniqueConstraintError":
-      res.status(400).json({ message: "Email sudah dipakai" });
+      res.status(400).json({ message: "Email must be unique" });
       break;
     case "JsonWebTokenError":
       res.status(401).json({ message: "Invalid Token" });

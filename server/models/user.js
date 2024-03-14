@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasMany(models.Ticket);
     }
   }
   User.init(
@@ -34,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       password: {
-        type : DataTypes.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
@@ -43,21 +44,21 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Password cannot be null",
           },
-          len:{
-            args: [5,255],
-            msg : "Passwords length must be 5 or more"
-          }
+          len: {
+            args: [5, 255],
+            msg: "Passwords length must be 5 or more",
+          },
         },
       },
       profilePicture: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
     },
     {
-      hooks:{
-        beforeCreate(data){
-          data.password = hashPassword(data.password)
-        }
+      hooks: {
+        beforeCreate(data) {
+          data.password = hashPassword(data.password);
+        },
       },
       sequelize,
       modelName: "User",
