@@ -11,8 +11,12 @@ router.post("/register", Controller.Register);
 
 router.post("/login", Controller.Login);
 
-// router.use(authentication);
+router.post('/google-login', Controller.googleLogin)
 
 router.get("/getMovies", Controller.fetchMovies);
+
+router.get("/movie/detail/:id", Controller.fetchMovieById);
+
+router.use(authentication);
 
 module.exports = router;

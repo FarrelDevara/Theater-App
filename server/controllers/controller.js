@@ -2,6 +2,8 @@ const { comparePassword } = require("../helper/bcrypt");
 const { signToken } = require("../helper/jwt");
 const { User } = require("../models");
 const axios = require("axios");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client();
 
 class Controller {
   static async Register(req, res, next) {
@@ -44,7 +46,50 @@ class Controller {
 
       res
         .status(200)
-        .json({ message: "User has successfully logged in", access_token });
+        .json({ message: "Login Success", access_token });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  static async googleLogin(req, res, next) {
+    const { OAuth2Client } = require("google-auth-library");
+    const client = new OAuth2Client();
+
+    try {
+      // console.log(req.body.googleToken);
+      const googleToken = req.body.googleToken;
+
+      const ticket = await client.verifyIdToken({
+        idToken: googleToken,
+        audience:
+          "224565751584-3eu74pi5cvbq0n5v1j62e72oar9c6n5s.apps.googleusercontent.com", // Specify the CLIENT_ID of the app that accesses the backend
+        // Or, if multiple clients access the backend:
+        //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+      });
+
+      const payload = ticket.getPayload();
+
+      let user = await User.findOne({
+        where : {
+          email : payload.email
+      }
+      }) ;
+
+      console.log(user);
+
+      if (!user){
+        user = await User.create({
+          username : payload.name,
+          email : payload.email,
+          password : Date.now() + Math.random() + "randomPass"
+        })
+      }
+
+      const access_token = signToken({id : user.id})
+
+      res.status(200).json({ message: "Login Google Success", access_token });
     } catch (error) {
       console.log(error);
       next(error);
@@ -63,12 +108,38 @@ class Controller {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODczNzY0YWUxY2ViZWJhYzI2ODc0ZTI3Y2RmOTEyMCIsInN1YiI6IjY1ZjE1YmY2NDcwZWFkMDE3ZTljYmM2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0StnX-MY-PfPmh8s5Nj-Oya98d8xdI_6FBS9CEVTOlQ",
         },
       });
+
+      
       //   .then(function (response) {
       //     // console.log(response.data);
       //     // res.status(200).json(response.data);
       //   });
 
       console.log(data);
+      res.status(200).json(data);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  static async fetchMovieById(req, res, next) {
+    try {
+      const id = req.params.id
+      // console.log(id);
+
+      const { data } = await axios({
+        method: "get",
+        url: "https://api.themoviedb.org/3/movie/" + id,
+        params: { language: "en-US", page: "1" },
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODczNzY0YWUxY2ViZWJhYzI2ODc0ZTI3Y2RmOTEyMCIsInN1YiI6IjY1ZjE1YmY2NDcwZWFkMDE3ZTljYmM2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0StnX-MY-PfPmh8s5Nj-Oya98d8xdI_6FBS9CEVTOlQ",
+        },
+      });
+      data.poster_path = `https://image.tmdb.org/t/p/w500` + data.poster_path 
+      // console.log(data);
       res.status(200).json(data);
     } catch (error) {
       console.log(error);

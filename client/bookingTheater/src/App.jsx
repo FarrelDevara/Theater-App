@@ -7,7 +7,10 @@ import {
 } from "react-router-dom";
 import Register from '../pages/register';
 import Login from '../pages/login';
-import Home from '../pages/home';
+import Home from '../pages/nowPlaying';
+import NowPlaying from '../pages/nowPlaying';
+import Detail from '../pages/detail';
+import Ticket from '../pages/ticket';
 // import './App.css'
 
 const router = createBrowserRouter([
@@ -20,9 +23,32 @@ const router = createBrowserRouter([
     element: <Login/>,
   },
   {
-    path: "/",
-    element: <Home/>,
+    path : '/now-playing',
+    element: <NowPlaying/>
   },
+  {
+    path : '/movie/detail/:id',
+    element: <Detail/>
+  },
+  {
+    path : '/movie/ticket/:id',
+    element: <Ticket/>
+  },
+  // {
+  //   element: <div>element parent</div>,
+  //   loader:() => {
+  //     if (!localStorage.access_token) {
+  //       return redirect("/login");
+  //     }
+  //     return null;
+  //   },
+  //   // children:[
+  //   //   {
+  //   //     path : '/',
+  //   //     element: <Home/>
+  //   //   }
+  //   // ]
+  // },
 ]);
 
 function App() {
