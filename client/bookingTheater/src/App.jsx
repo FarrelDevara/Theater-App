@@ -5,12 +5,13 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Register from '../pages/register';
-import Login from '../pages/login';
-import Home from '../pages/nowPlaying';
-import NowPlaying from '../pages/nowPlaying';
-import Detail from '../pages/detail';
-import Ticket from '../pages/ticket';
+import Register from './pages/register';
+import Login from './pages/login';
+import Home from './pages/nowPlaying';
+import NowPlaying from './pages/nowPlaying';
+import Detail from './pages/detail';
+import Ticket from './pages/ticket';
+import MainLayout from './components/MainLayout';
 // import './App.css'
 
 const router = createBrowserRouter([
@@ -23,17 +24,22 @@ const router = createBrowserRouter([
     element: <Login/>,
   },
   {
-    path : '/now-playing',
-    element: <NowPlaying/>
-  },
-  {
-    path : '/movie/detail/:id',
-    element: <Detail/>
-  },
-  {
-    path : '/movie/ticket/:id',
-    element: <Ticket/>
-  },
+    element : <MainLayout/>,
+    children:[
+      {
+        path : '/now-playing',
+        element: <NowPlaying/>
+      },
+      {
+        path : '/movie/detail/:id',
+        element: <Detail/>
+      },
+      {
+        path : '/movie/ticket/:id',
+        element: <Ticket/>
+      },
+    ]
+  }
   // {
   //   element: <div>element parent</div>,
   //   loader:() => {

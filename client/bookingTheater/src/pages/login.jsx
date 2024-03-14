@@ -90,8 +90,8 @@ function Login() {
 
           <button type="submit">Login</button>
 
-          <div id="buttonDiv"></div>
         </form>
+          <div id="buttonDiv"></div>
         
       </div>
     </>

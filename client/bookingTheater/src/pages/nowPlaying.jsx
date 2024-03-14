@@ -12,7 +12,6 @@ async function fetchData(){
             method:"get",
             url: "http://localhost:3000/getMovies"
         })
-
         // console.log(data);
         setData(data)
     } catch (error) {
