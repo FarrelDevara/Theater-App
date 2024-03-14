@@ -1,6 +1,6 @@
 const { comparePassword } = require("../helper/bcrypt");
 const { signToken } = require("../helper/jwt");
-const { User } = require("../models");
+const { User,Ticket } = require("../models");
 const axios = require("axios");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
@@ -143,6 +143,19 @@ class Controller {
       res.status(200).json(data);
     } catch (error) {
       console.log(error);
+      next(error);
+    }
+  }
+
+  static async deleteTicket(req,res,next){
+    try {
+
+      const ticket = await Ticket.delete({where:{
+        id : req.params.id
+      }})
+
+      res.status(200).json({message : "Ticket has been deleted"})
+    } catch (error) {
       next(error);
     }
   }
