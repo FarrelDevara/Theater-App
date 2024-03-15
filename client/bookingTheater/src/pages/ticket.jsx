@@ -1,11 +1,13 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import axios from 'axios'
 import { useEffect, useState } from "react";
 function Ticket(){
     const {ticketId} = useParams()
+    const navigate = useNavigate()
     // console.log(ticketId);
     const [ticket,setTicket] = useState()
-    
+    const [tokenPayment, setTokenPayment] = useState()
+
     async function fetchTicket(){
         try {
             const {data} = await axios({
@@ -22,14 +24,35 @@ function Ticket(){
         }
     }
 
-    const handlePayment = () => {
+    // console.log(tokenPayment);
+    const handlePayment = async () => {
+
+        const { data} = await axios({
+            method : "post",
+            url : "http://localhost:3000/payment",
+            headers : {
+                Authorization : "Bearer "+ localStorage.access_token
+            }
+        })
+        // console.log(data.order_id);
+
         let payButton = document.getElementById('pay-button');
+        console.log(data,"<< data");
     
         // Trigger snap popup. @TODO: Replace TRANSACTION_TOKEN_HERE with your transaction token
-        window.snap.pay('89eef0c8-f277-45e5-aaba-b039f9585143', {
-          onSuccess: function(result){
+        window.snap.pay(data.transactionToken, {
+          onSuccess: async function(result){
             /* You may add your own implementation here */
             alert("payment success!"); console.log(result);
+
+            await axios({
+                method : "patch",
+                url : "http://localhost:3000/payment/status/" + ticketId,
+                headers : {
+                    Authorization : "Bearer "+ localStorage.access_token
+                }
+            })
+            navigate('/my-ticket')
           },
           onPending: function(result){
             /* You may add your own implementation here */
@@ -46,7 +69,7 @@ function Ticket(){
         })
       
     }
-    console.log(ticket);
+    // console.log(ticket);
 
     useEffect(()=>{
         fetchTicket()
@@ -59,7 +82,9 @@ function Ticket(){
             <p>{ticket && ticket.movieName}</p>
             <p>{ticket && ticket.price}</p>
 
-            <button onClick={handlePayment}> Payment </button>
+            {ticket && (ticket.paymentStatus === false) ? 
+            <button onClick={handlePayment}> Payment </button> : <button onClick={handlePayment} disabled> Already Paid </button>
+            }
         </div>
         </>
     )

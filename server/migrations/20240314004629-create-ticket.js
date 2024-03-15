@@ -10,16 +10,24 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       MovieId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull : false
       },
       UserId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull : false,
+        references: {
+          model: "Users", 
+          key: 'id'
+        }
       },
       paymentStatus: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull : false
       },
       price: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull : false
       },
       movieName: {
         type: Sequelize.STRING

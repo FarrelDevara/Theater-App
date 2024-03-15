@@ -22,8 +22,10 @@ router.use(authentication);
 router.post('/create-ticket/:id', Controller.createTicket)
 router.get('/ticket/:id', Controller.getTicket)
 
+router.get('/my-ticket', Controller.fetchMyTicket)
+
 router.post('/payment', Controller.initiatePayment)
-router.patch('payment/status/:id', Controller.updatePayment)
+router.patch('/payment/status/:id', Controller.updatePayment)
 
 
 

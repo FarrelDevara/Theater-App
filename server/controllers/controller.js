@@ -144,6 +144,24 @@ class Controller {
     }
   }
 
+  static async fetchMyTicket(req, res, next) {
+    try {
+      console.log(req.user.id);
+
+      const ticket = await Ticket.findAll({
+        where : {
+          UserId : req.user.id
+        }
+      })
+      console.log(ticket);
+
+      res.status(200).json(ticket);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
   static async deleteTicket(req, res, next) {
     try {
       const ticket = await Ticket.delete({
@@ -202,7 +220,7 @@ class Controller {
       let parameter = {
         //data detail order
         transaction_details: {
-          order_id: `YOUR-ORDERID-${order_id}`,
+          order_id: order_id,
           gross_amount: 45000,
         },
         //data jenis pembayaran
@@ -220,7 +238,7 @@ class Controller {
       const transaction = await snap.createTransaction(parameter)
       let transactionToken = transaction.token
 
-      res.status(200).json({message : "Order created", transactionToken})
+      res.status(200).json({message : "Order created", transactionToken, order_id})
     } catch (error) {
       next(error);
     }
@@ -228,6 +246,19 @@ class Controller {
 
   static async updatePayment(req, res, next) {
     try {
+        console.log(req.params.id);
+        // const {order_id} = req.body
+        console.log("masuk?");
+        const ticket = await Ticket.findByPk(req.params.id)
+        if (ticket.paymentStatus === true) throw {name : "AlreadyPaid"}
+
+        await Ticket.update({paymentStatus : true}, {
+          where : {
+            id : req.params.id
+        }
+      })
+
+      res.status(200).json({message : "pembayaran berhasil"})
     } catch (error) {
       next(error);
     }

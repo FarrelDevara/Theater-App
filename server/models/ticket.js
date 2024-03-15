@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
             msg: "UserId cannot be null",
           },
         },
+        
       },
       paymentStatus: {
         type: DataTypes.BOOLEAN,

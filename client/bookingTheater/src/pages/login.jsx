@@ -80,20 +80,7 @@ function Login() {
   
   return (
     <>
-      <div>
-        <form action="" onSubmit={submitInput}>
-          <label htmlFor="">Email</label>
-          <input type="email" name="email" id="" onChange={handleInput} />
 
-          <label htmlFor="">Password</label>
-          <input type="password" name="password" id="" onChange={handleInput} />
-
-          <button type="submit">Login</button>
-
-        </form>
-        <div id="buttonDiv"></div>
-        
-      </div>
       <div className="bg-gray-100 flex justify-center items-center h-screen">
   {/* Left: Image */}
   <div className="w-1/2 h-screen hidden lg:block">
@@ -168,7 +155,7 @@ function Login() {
       </Link>
     </div>
     <div className="text-center mt-3"> -OR-</div>
-    <div id="buttonDiv"></div>
+    <div id="buttonDiv" className="flex items-center justify-center mt-3"></div>
   </div>
     
 </div>
