@@ -1,33 +1,18 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom"
 import Swal from "sweetalert2";
+import { fetchDataById } from "../../store/movieSlice";
 
 function Detail(){
+    const dispatch = useDispatch()
     const navigate = useNavigate()
-    const [data,setData] = useState()
+    // const [data,setData] = useState()
+
     const {id} = useParams()
-
+    const {movies} = useSelector((state)=>state.movies)
     // console.log(id);
-
-    async function fetchDataById(){
-        try {
-            const {data} = await axios({
-                method : "get",
-                url : "http://localhost:3000/movie/detail/" + id
-            })
-
-            setData(data)
-        } catch (error) {
-            console.log(error);
-
-            Swal.fire({
-                title: "Error",
-                text: "That thing is still around?",
-                icon: "error"
-              });
-        }
-    }
 
     const [ticket,setTicket] = useState()
 
@@ -41,23 +26,22 @@ function Detail(){
                 }
             })
 
+            // setTicket(data)
             navigate('/ticket/'+ data.id)
-
-            console.log(data);
-            setTicket(data)
         } catch (error) {
             console.log(error);
         }
     }
 
     useEffect(()=>{
-        fetchDataById()
+        dispatch(fetchDataById(id))
     },[])
+
     return(
         <>
         <div>detail page</div>
-        <div><img src={data && data.poster_path} alt="" /></div>
-        <div>{data && data.title}</div>
+        <div><img src={movies && movies.poster_path} alt="" /></div>
+        <div>{movies && movies.title}</div>
         <div><button onClick={createTicket}>Buy Ticket onclick</button></div>
         {/* <div><Link to={`/movie/ticket/${data && data.id}`}>Buy Ticket</Link></div> */}
 

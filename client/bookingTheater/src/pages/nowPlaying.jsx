@@ -1,32 +1,23 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react';
 import Card from '../components/Card';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchData } from '../../store/movieSlice';
 
 function NowPlaying(){
 
-    const [data, setData] = useState()
+const dispatch = useDispatch()
 
-async function fetchData(){
-    try {
-        const {data} = await axios({
-            method:"get",
-            url: "http://localhost:3000/getMovies"
-        })
-        // console.log(data);
-        setData(data)
-    } catch (error) {
-        console.log(error);
-    }
-}
+const {movies} = useSelector((state)=>state.movies)
 
 useEffect(()=>{
- fetchData()
+ dispatch(fetchData())
 }
 ,[])
 
     return(
         <>
-        {data && data.results.map((item)=>(
+        {movies && movies?.results?.map((item)=>(
         <Card data={item}/>
         ))}
         

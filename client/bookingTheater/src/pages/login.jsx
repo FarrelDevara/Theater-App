@@ -27,7 +27,7 @@ function Login() {
         url: "http://localhost:3000/login",
         data: input,
       });
-      console.log("berhasil");
+      // console.log("berhasil");
 
       localStorage.setItem("access_token", data.access_token);
 

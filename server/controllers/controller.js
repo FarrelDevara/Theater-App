@@ -197,7 +197,7 @@ class Controller {
   static async getTicket(req,res,next){
     try {
       const ticket = await Ticket.findByPk(req.params.id)
-
+      if(!ticket) throw {name : "notFound"}
       res.status(200).json(ticket)
     } catch (error) {
       next(error)

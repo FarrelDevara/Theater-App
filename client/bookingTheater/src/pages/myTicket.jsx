@@ -1,36 +1,23 @@
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useDebugValue, useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { fetchTicket } from "../../store/ticketSlice";
 
 function MyTicket(){
 
-    const [data,setData] = useState()
+    const dispatch = useDispatch()
 
-    async function fetchTicket(){
-        try {
-            const {data} = await axios({
-                method : "get",
-                url : "http://localhost:3000/my-ticket",
-                headers:{
-                    Authorization : "Bearer " + localStorage.access_token
-                }
-            })
-
-            setData(data)
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    console.log(data);
+    const {tickets} = useSelector((state)=>state.tickets)
 
     useEffect(()=>{
-        fetchTicket()
+        dispatch(fetchTicket())
     },[])
+
     return(
         <>
         
-        {data && data.map((item)=>(
+        {tickets && tickets?.map((item)=>(
             <div key={item.id}>
                 <p>{item.movieName}</p>
             <p>{item.price}</p>

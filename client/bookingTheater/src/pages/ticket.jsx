@@ -1,30 +1,15 @@
 import { useNavigate, useParams } from "react-router-dom"
 import axios from 'axios'
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTicketById } from "../../store/ticketSlice";
 function Ticket(){
     const {ticketId} = useParams()
     const navigate = useNavigate()
     // console.log(ticketId);
-    const [ticket,setTicket] = useState()
-    const [tokenPayment, setTokenPayment] = useState()
+    const dispatch = useDispatch()
+    const {tickets} = useSelector((state)=>state.tickets)
 
-    async function fetchTicket(){
-        try {
-            const {data} = await axios({
-                method:"get",
-                url : "http://localhost:3000/ticket/" + ticketId,
-                headers:{
-                    Authorization : "Bearer " + localStorage.access_token
-                }
-            })
-
-            setTicket(data)
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    // console.log(tokenPayment);
     const handlePayment = async () => {
 
         const { data} = await axios({
@@ -72,17 +57,17 @@ function Ticket(){
     // console.log(ticket);
 
     useEffect(()=>{
-        fetchTicket()
+        dispatch(fetchTicketById(ticketId))
     },[])
 
     return(
         <>
         <div>ticket</div>
         <div>
-            <p>{ticket && ticket.movieName}</p>
-            <p>{ticket && ticket.price}</p>
+            <p>{tickets && tickets.movieName}</p>
+            <p>{tickets && tickets.price}</p>
 
-            {ticket && (ticket.paymentStatus === false) ? 
+            {tickets && (tickets.paymentStatus === false) ? 
             <button onClick={handlePayment}> Payment </button> : <button onClick={handlePayment} disabled> Already Paid </button>
             }
         </div>

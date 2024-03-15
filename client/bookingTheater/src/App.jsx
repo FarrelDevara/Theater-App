@@ -1,6 +1,4 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import {
   createBrowserRouter,
   redirect,
@@ -14,7 +12,8 @@ import Detail from './pages/detail';
 import Ticket from './pages/ticket';
 import MainLayout from './components/MainLayout';
 import MyTicket from './pages/myTicket';
-
+import {Provider} from 'react-redux'
+import store from "../store";
 // import './App.css'
 
 const router = createBrowserRouter([
@@ -25,7 +24,7 @@ const router = createBrowserRouter([
       if (localStorage.access_token) {
         return redirect('/now-playing')
       }
-      return redirect("/login");
+      return null
     },
   },
   {
@@ -81,7 +80,9 @@ const router = createBrowserRouter([
 function App() {
 
   return (
+    <Provider store={store}>
     <RouterProvider router={router} />
+    </Provider>
   )
 }
 
