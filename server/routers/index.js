@@ -2,10 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Controller = require("../controllers/controller");
 const { authentication } = require("../middlewares/authentication");
-
-router.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+const { authorization } = require("../middlewares/authorization");
 
 router.post("/register", Controller.Register);
 
@@ -20,12 +17,11 @@ router.get("/movie/detail/:id", Controller.fetchMovieById);
 router.use(authentication);
 
 router.post('/create-ticket/:id', Controller.createTicket)
-router.get('/ticket/:id', Controller.getTicket)
-
 router.get('/my-ticket', Controller.fetchMyTicket)
 
+router.get('/ticket/:id',authorization, Controller.getTicket)
 router.post('/payment', Controller.initiatePayment)
-router.patch('/payment/status/:id', Controller.updatePayment)
+router.patch('/payment/status/:id',authorization, Controller.updatePayment)
 
 
 

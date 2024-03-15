@@ -59,8 +59,10 @@ class Controller {
     const client = new OAuth2Client();
 
     try {
-      // console.log(req.body.googleToken);
       const googleToken = req.body.googleToken;
+      if (!googleToken) {
+        throw {name : "InvalidToken"}
+      }
 
       const ticket = await client.verifyIdToken({
         idToken: googleToken,
@@ -69,6 +71,7 @@ class Controller {
         // Or, if multiple clients access the backend:
         //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
       });
+      if (!ticket) throw {name : "InvalidToken"}
 
       const payload = ticket.getPayload();
 
@@ -77,8 +80,6 @@ class Controller {
           email: payload.email,
         },
       });
-
-      console.log(user);
 
       if (!user) {
         user = await User.create({
@@ -109,7 +110,7 @@ class Controller {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODczNzY0YWUxY2ViZWJhYzI2ODc0ZTI3Y2RmOTEyMCIsInN1YiI6IjY1ZjE1YmY2NDcwZWFkMDE3ZTljYmM2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0StnX-MY-PfPmh8s5Nj-Oya98d8xdI_6FBS9CEVTOlQ",
         },
       });
-
+      if (!data) throw {name : "InvalidToken"}
       // console.log(data);
       res.status(200).json(data);
     } catch (error) {
@@ -146,14 +147,15 @@ class Controller {
 
   static async fetchMyTicket(req, res, next) {
     try {
-      console.log(req.user.id);
+      // console.log(req.user.id);
 
       const ticket = await Ticket.findAll({
         where : {
           UserId : req.user.id
         }
       })
-      console.log(ticket);
+      if (!ticket) throw {name : "Invalid Token"}
+      // console.log(ticket);
 
       res.status(200).json(ticket);
     } catch (error) {
@@ -180,14 +182,15 @@ class Controller {
     // console.log(req.user);
     // console.log(movieName, "<<<moviename");
     // console.log(id, "<<<<params");
+    // console.log(req.params.id);
     try {
       const ticket = await Ticket.create({
-        MovieId : id,
+        MovieId : req.params.id,
         UserId : req.user.id,
         movieName : movieName,
         price : 45000
       })
-
+      console.log(ticket);
      res.status(201).json(ticket)
     } catch (error) {
       next(error)
@@ -246,9 +249,9 @@ class Controller {
 
   static async updatePayment(req, res, next) {
     try {
-        console.log(req.params.id);
+        // console.log(req.params.id);
         // const {order_id} = req.body
-        console.log("masuk?");
+        // console.log("masuk?");
         const ticket = await Ticket.findByPk(req.params.id)
         if (ticket.paymentStatus === true) throw {name : "AlreadyPaid"}
 
@@ -258,7 +261,7 @@ class Controller {
         }
       })
 
-      res.status(200).json({message : "pembayaran berhasil"})
+      res.status(201).json({message : "Pembayaran berhasil"})
     } catch (error) {
       next(error);
     }

@@ -1,5 +1,5 @@
-import axios from "axios";
-import { useDebugValue, useEffect, useState } from "react"
+
+import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchTicket } from "../../store/ticketSlice";
@@ -10,6 +10,8 @@ function MyTicket(){
 
     const {tickets} = useSelector((state)=>state.tickets)
 
+    console.log(tickets);
+
     useEffect(()=>{
         dispatch(fetchTicket())
     },[])
@@ -17,7 +19,7 @@ function MyTicket(){
     return(
         <>
         
-        {tickets && tickets?.map((item)=>(
+        {Array.isArray(tickets) && tickets.length > 0 && tickets?.map((item)=>(
             <div key={item.id}>
                 <p>{item.movieName}</p>
             <p>{item.price}</p>

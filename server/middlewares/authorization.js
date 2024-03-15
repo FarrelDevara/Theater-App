@@ -1,11 +1,19 @@
-const {User} = require('../models')
+const {User, Ticket} = require('../models')
 
 const authorization = async (req, res, next) => {
     try {
-      // console.log(req.user.role, "<<<<< di authorize");
 
-      const findUser = await User.findByPk(req.user.id)
-      if (!findUser) throw {name : "Forbidden"}
+      const ticket = await Ticket.findOne({where : {
+        id : req.params.id
+      }})
+
+      if (!ticket) {
+        throw {name : "notFound"}
+      }
+
+      if (ticket.UserId !== req.user.id) {
+        throw {name : "Forbidden"}
+      }
   
       next()
     } catch (error) {
