@@ -1,10 +1,13 @@
 const { comparePassword } = require("../helper/bcrypt");
 const { signToken } = require("../helper/jwt");
-const { User,Ticket } = require("../models");
+const { User, Ticket } = require("../models");
 const axios = require("axios");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
+const midtransClient = require("midtrans-client");
 
+let movieName;
+let id
 class Controller {
   static async Register(req, res, next) {
     try {
@@ -44,9 +47,7 @@ class Controller {
       const payload = { id: findUser.id };
       const access_token = signToken(payload);
 
-      res
-        .status(200)
-        .json({ message: "Login Success", access_token });
+      res.status(200).json({ message: "Login Success", access_token });
     } catch (error) {
       console.log(error);
       next(error);
@@ -72,22 +73,22 @@ class Controller {
       const payload = ticket.getPayload();
 
       let user = await User.findOne({
-        where : {
-          email : payload.email
-      }
-      }) ;
+        where: {
+          email: payload.email,
+        },
+      });
 
       console.log(user);
 
-      if (!user){
+      if (!user) {
         user = await User.create({
-          username : payload.name,
-          email : payload.email,
-          password : Date.now() + Math.random() + "randomPass"
-        })
+          username: payload.name,
+          email: payload.email,
+          password: Date.now() + Math.random() + "randomPass",
+        });
       }
 
-      const access_token = signToken({id : user.id})
+      const access_token = signToken({ id: user.id });
 
       res.status(200).json({ message: "Login Google Success", access_token });
     } catch (error) {
@@ -95,7 +96,7 @@ class Controller {
       next(error);
     }
   }
-
+  
   static async fetchMovies(req, res, next) {
     try {
       const { data } = await axios({
@@ -109,13 +110,7 @@ class Controller {
         },
       });
 
-      
-      //   .then(function (response) {
-      //     // console.log(response.data);
-      //     // res.status(200).json(response.data);
-      //   });
-
-      console.log(data);
+      // console.log(data);
       res.status(200).json(data);
     } catch (error) {
       console.log(error);
@@ -125,7 +120,7 @@ class Controller {
 
   static async fetchMovieById(req, res, next) {
     try {
-      const id = req.params.id
+      id = req.params.id;
       // console.log(id);
 
       const { data } = await axios({
@@ -138,8 +133,10 @@ class Controller {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODczNzY0YWUxY2ViZWJhYzI2ODc0ZTI3Y2RmOTEyMCIsInN1YiI6IjY1ZjE1YmY2NDcwZWFkMDE3ZTljYmM2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0StnX-MY-PfPmh8s5Nj-Oya98d8xdI_6FBS9CEVTOlQ",
         },
       });
-      data.poster_path = `https://image.tmdb.org/t/p/w500` + data.poster_path 
+      data.poster_path = `https://image.tmdb.org/t/p/w500` + data.poster_path;
       // console.log(data);
+      movieName = data.title
+      // console.log(movieName);
       res.status(200).json(data);
     } catch (error) {
       console.log(error);
@@ -147,14 +144,90 @@ class Controller {
     }
   }
 
-  static async deleteTicket(req,res,next){
+  static async deleteTicket(req, res, next) {
+    try {
+      const ticket = await Ticket.delete({
+        where: {
+          id: req.params.id,
+        },
+      });
+
+      res.status(200).json({ message: "Ticket has been deleted" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createTicket(req,res,next){
+    // console.log(req.user);
+    // console.log(movieName, "<<<moviename");
+    // console.log(id, "<<<<params");
+    try {
+      const ticket = await Ticket.create({
+        MovieId : id,
+        UserId : req.user.id,
+        movieName : movieName,
+        price : 45000
+      })
+
+     res.status(201).json(ticket)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async getTicket(req,res,next){
+    try {
+      const ticket = await Ticket.findByPk(req.params.id)
+
+      res.status(200).json(ticket)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async initiatePayment(req, res, next) {
+    
     try {
 
-      const ticket = await Ticket.delete({where:{
-        id : req.params.id
-      }})
+      ////////////////////////////////////////////////////////////////////////////////////
+      let snap = new midtransClient.Snap({
+        // Set to true if you want Production Environment (accept real transaction).
+        isProduction: false,
+        serverKey: "SB-Mid-server-Qae5O6HkfLFJ1fDQgS76RVdw",
+      });
 
-      res.status(200).json({message : "Ticket has been deleted"})
+
+      const order_id = Math.random().toString()
+      let parameter = {
+        //data detail order
+        transaction_details: {
+          order_id: `YOUR-ORDERID-${order_id}`,
+          gross_amount: 45000,
+        },
+        //data jenis pembayaran
+        credit_card: {
+          secure: true,
+        },
+        //data detail customer
+        customer_details: {
+          first_name: req.user.username,
+          email: req.user.email,
+          phone: "08111222333",
+        },
+      };
+
+      const transaction = await snap.createTransaction(parameter)
+      let transactionToken = transaction.token
+
+      res.status(200).json({message : "Order created", transactionToken})
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updatePayment(req, res, next) {
+    try {
     } catch (error) {
       next(error);
     }

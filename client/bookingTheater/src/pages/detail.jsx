@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import Swal from "sweetalert2";
 
 function Detail(){
-
+    const navigate = useNavigate()
     const [data,setData] = useState()
     const {id} = useParams()
 
@@ -16,8 +16,6 @@ function Detail(){
                 method : "get",
                 url : "http://localhost:3000/movie/detail/" + id
             })
-
-            // console.log(data);
 
             setData(data)
         } catch (error) {
@@ -31,6 +29,27 @@ function Detail(){
         }
     }
 
+    const [ticket,setTicket] = useState()
+
+    async function createTicket(){
+        try {
+            const { data } = await axios({
+                method: "post",
+                url : "http://localhost:3000/create-ticket/" + id,
+                headers:{
+                    Authorization : `Bearer ${localStorage.access_token}`
+                }
+            })
+
+            navigate('/ticket/'+ data.id)
+
+            console.log(data);
+            setTicket(data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(()=>{
         fetchDataById()
     },[])
@@ -39,7 +58,8 @@ function Detail(){
         <div>detail page</div>
         <div><img src={data && data.poster_path} alt="" /></div>
         <div>{data && data.title}</div>
-        <div><Link to={`/movie/ticket/${data && data.id}`}>Buy Ticket</Link></div>
+        <div><button onClick={createTicket}>Buy Ticket onclick</button></div>
+        {/* <div><Link to={`/movie/ticket/${data && data.id}`}>Buy Ticket</Link></div> */}
 
         
         </>

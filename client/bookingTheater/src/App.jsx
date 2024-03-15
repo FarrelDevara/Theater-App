@@ -34,27 +34,23 @@ const router = createBrowserRouter([
         path : '/movie/detail/:id',
         element: <Detail/>
       },
+      
+    ]
+  },
+  {
+    loader:() => {
+      if (!localStorage.access_token) {
+        return redirect("/login");
+      }
+      return null;
+    },
+    children:[
       {
-        path : '/movie/ticket/:id',
+        path : '/ticket/:ticketId',
         element: <Ticket/>
       },
     ]
-  }
-  // {
-  //   element: <div>element parent</div>,
-  //   loader:() => {
-  //     if (!localStorage.access_token) {
-  //       return redirect("/login");
-  //     }
-  //     return null;
-  //   },
-  //   // children:[
-  //   //   {
-  //   //     path : '/',
-  //   //     element: <Home/>
-  //   //   }
-  //   // ]
-  // },
+  },
 ]);
 
 function App() {
