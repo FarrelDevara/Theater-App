@@ -29,5 +29,5 @@ router.patch('/payment/status/:id',authorization, Controller.updatePayment)
 router.delete('/ticket/delete/:id',authorization, Controller.deleteTicket)
 
 
-
 module.exports = router;
+
