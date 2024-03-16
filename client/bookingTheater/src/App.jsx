@@ -52,20 +52,26 @@ const router = createBrowserRouter([
     ]
   },
   {element : <MainLayout/>,
-    loader:() => {
-      if (!localStorage.access_token) {
-        return redirect("/login");
-      }
-      return null;
-    },
     children:[
       {
         path : '/ticket/:ticketId',
-        element: <Ticket/>
+        element: <Ticket/>,
+        loader:() => {
+          if (!localStorage.access_token) {
+            return redirect("/login");
+          }
+          return null;
+        }
       },
       {
         path : '/my-ticket',
-        element: <MyTicket/>
+        element: <MyTicket/>,
+        loader:() => {
+          if (!localStorage.access_token) {
+            return redirect("/login");
+          }
+          return null;
+        }
       },
       {
         path : '/',
