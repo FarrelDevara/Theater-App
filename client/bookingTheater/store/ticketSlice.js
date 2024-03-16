@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { BASE_URL } from "../constant";
 
 export const ticketSlice = createSlice({
     name : "tickets",
@@ -24,7 +25,7 @@ export function fetchTicket(){
         try {
             const {data} = await axios({
                 method : "get",
-                url : "http://localhost:3000/my-ticket",
+                url : `${BASE_URL}/my-ticket`,
                 headers:{
                     Authorization : "Bearer " + localStorage.access_token
                 }
@@ -49,7 +50,7 @@ export function fetchTicketById(ticketId){
     try {
         const {data} = await axios({
             method:"get",
-            url : "http://localhost:3000/ticket/" + ticketId,
+            url : `${BASE_URL}/ticket/` + ticketId,
             headers:{
                 Authorization : "Bearer " + localStorage.access_token
             }

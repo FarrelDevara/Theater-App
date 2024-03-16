@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, Outlet, redirect, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-function Navbar() {
+function NavbarLogin() {
   const navigate = useNavigate()
 
   function Logout() {
@@ -33,34 +33,14 @@ function Navbar() {
                 <Link to={'/'} className="hover:text-indigo-600 text-gray-700">
                   Home
                 </Link>
-                <Link
-                  to={"/my-ticket"}
-                  className="hover:text-indigo-600 text-gray-700"
-                >
-                  Ticket
-                </Link>
               </div>
-            </div>
-
-            <div className="flex space-x-4 items-center">
-              {!localStorage.access_token ? <Link to={'/login'} className="text-blue-800 text-sm">
-                Login
-              </Link> : ""}
-              {localStorage.access_token ? (
-                <button onClick={Logout} className="text-red-800 text-sm">
-                  Logout
-                </button>
-              ) : (
-                <button disabled className="text-gray-800 text-sm">
-                  Logout
-                </button>
-              )}
             </div>
           </div>
         </div>
       </nav>
+      <Outlet/>
     </>
   );
 }
 
-export default Navbar;
+export default NavbarLogin;

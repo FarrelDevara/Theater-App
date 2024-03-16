@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from 'axios'
+import { BASE_URL } from "../../constant";
 
 function Login() {
   const navigate = useNavigate();
@@ -24,10 +25,10 @@ function Login() {
     try {
       const { data } = await axios({
         method: "post",
-        url: "http://localhost:3000/login",
+        url: `${BASE_URL}/login`,
         data: input,
       });
-      // console.log("berhasil");
+
 
       localStorage.setItem("access_token", data.access_token);
 
@@ -48,7 +49,7 @@ function Login() {
     // console.log("Encoded JWT ID token: " + response.credential);
 
     try {
-      const {data} = await axios.post("http://localhost:3000/google-login",{
+      const {data} = await axios.post(`${BASE_URL}/google-login`,{
         googleToken: response.credential
       })
 
@@ -85,14 +86,14 @@ function Login() {
   {/* Left: Image */}
   <div className="w-1/2 h-screen hidden lg:block">
     <img
-      src="https://placehold.co/800x/667fff/ffffff.png?text=Your+Image&font=Montserrat"
+      src="./bg.jpg"
       alt="Placeholder Image"
       className="object-cover w-full h-full"
     />
   </div>
   {/* Right: Login Form */}
   <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-    <h1 className="text-2xl font-semibold mb-4">Login</h1>
+    <h1 className="text-2xl font-semibold mb-4">Login </h1>
     <form onSubmit={submitInput}>
       {/* Username Input */}
       <div className="mb-4">
@@ -121,18 +122,6 @@ function Login() {
           className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
           autoComplete="off"
         />
-      </div>
-      {/* Remember Me Checkbox */}
-      <div className="mb-4 flex items-center">
-        <input
-          type="checkbox"
-          id="remember"
-          name="remember"
-          className="text-blue-500"
-        />
-        <label htmlFor="remember" className="text-gray-600 ml-2">
-          Remember Me
-        </label>
       </div>
       {/* Forgot Password Link */}
       <div className="mb-6 text-blue-500">

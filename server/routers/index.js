@@ -22,8 +22,10 @@ router.use(authentication);
 router.post('/create-ticket/:id', Controller.createTicket)
 router.get('/my-ticket', Controller.fetchMyTicket)
 router.get('/ticket/:id',authorization, Controller.getTicket)
+
 router.post('/payment', Controller.initiatePayment)
 router.patch('/payment/status/:id',authorization, Controller.updatePayment)
+
 router.delete('/ticket/delete/:id',authorization, Controller.deleteTicket)
 
 

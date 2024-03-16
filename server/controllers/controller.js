@@ -125,8 +125,9 @@ class Controller {
     try {
       const { id, token } = req.params;
       // console.log(typeof +id);
+      if (!req.body.password) throw {name : "PasswordRequired"}
       let verify = verifyToken(token);
-
+    
       // console.log(verify);
       // console.log(req.body.password, "<<<<<<<<<<,passbaru");
       if (+id !== verify.id) throw { name: "Forbidden" };
@@ -150,7 +151,7 @@ class Controller {
       // console.log(id,token);
 
       const user = await User.findOne({ where: { id } });
-      if (!user) throw { name: "InvalidEmail" };
+      if (!user) throw { name: "Forbidden" };
 
       const verify = verifyToken(token);
       // console.log("masook");
@@ -175,6 +176,11 @@ class Controller {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODczNzY0YWUxY2ViZWJhYzI2ODc0ZTI3Y2RmOTEyMCIsInN1YiI6IjY1ZjE1YmY2NDcwZWFkMDE3ZTljYmM2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0StnX-MY-PfPmh8s5Nj-Oya98d8xdI_6FBS9CEVTOlQ",
         },
       });
+
+      data.results.forEach((item)=>{
+        item.poster_path = `https://image.tmdb.org/t/p/w500` + item.poster_path;
+      })
+
       if (!data) throw { name: "InvalidToken" };
       // console.log(data);
       res.status(200).json(data);
@@ -231,13 +237,17 @@ class Controller {
 
   static async deleteTicket(req, res, next) {
     try {
+      console.log(req.params.id, "<<<<<<<<<<");
 
-      const findTicket = await Ticket.findByPk(req.params.id)
+      const findTicket = await Ticket.findOne({where :{id : req.params.id}})
+      console.log(findTicket);
+      
       if (findTicket.paymentStatus === true) {
         throw {name : "CantDelete"}
       }
-
-      await Ticket.delete({
+      
+      console.log("masuk?");
+      await Ticket.destroy({
         where: {
           id: req.params.id,
         },

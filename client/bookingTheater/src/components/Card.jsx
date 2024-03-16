@@ -1,22 +1,31 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
-function Card(data){
-
-
-return(
+function Card(data) {
+  console.log(data.data);
+  return (
     <>
-    
-    <div class="s flex w-96 flex-col rounded-xl bg-white bg-clip-border text-gray-700 mt-5 shadow-md">
-  <div class="p-6">
-    <img src="" alt="" /> img aja
-  </div>
-</div>
-    <div>
-    <div>{data.data.original_title}</div>
-    <div><Link to={`/movie/detail/${data.data.id}`}>detail</Link></div>
-    </div>
+      {/* Show Card */}
+      <div className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col mb-2">
+        <img
+          src={data.data.poster_path}
+          alt="Show Image"
+          className="w-full h-90 object-cover"
+        />
+        <div className="flex">
+          <h3 className="text-xl font-bold mt-3">{data.data.original_title}</h3>
+        </div>
+
+        <div className="mt-auto">
+          <Link
+            to={`/movie/detail/${data.data.id}`}
+            className="block text-center mt-4 bg-gray-900 text-white py-2 px-4 rounded hover:bg-gray-800"
+          >
+            Detail Movie
+          </Link>
+        </div>
+      </div>
     </>
-)
+  );
 }
 
-export default Card
+export default Card;

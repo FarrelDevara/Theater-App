@@ -3,6 +3,7 @@ const {User, Ticket} = require('../models')
 const request = require('supertest')
 const app = require('../app')
 
+let token;
 
 beforeAll( async ()=>{
     try {
@@ -282,21 +283,37 @@ describe("POST /forget-password", ()=>{
         expect(response.body).toBeInstanceOf(Object)       
         expect(response.body).toHaveProperty("message", "Internal Server Error")     
     })
+
 })
 
-
-describe("POST /reset-password/:id/:token", ()=>{ 
+describe("GET /reset-password/:id/:token", ()=>{ 
 
     test("Invalid Token", async()=>{
-    
-        // console.log(token);
-        // let verify = verifyToken(token)
-        // console.log(verify.id, "<<<<Verify");
-        // console.log(typeof verify.id);
 
         let response = await request(app)
-        .post(`/reset-password/1/${token}`)
-        // .send(dummy)
+        .get(`/reset-password/1/${token}`)
+        
+        // console.log(response.body);
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "Check your email")     
+    })
+
+    test("Forbidden", async()=>{
+
+        let response = await request(app)
+        .get(`/reset-password/5/${token}`)
+        
+        // console.log(response.body);
+        expect(response.status).toBe(403)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "Forbidden")     
+    })
+
+    test("Invalid Token", async()=>{
+
+        let response = await request(app)
+        .get(`/reset-password/1/asd`)
         
         // console.log(response.body);
         expect(response.status).toBe(401)
@@ -308,19 +325,52 @@ describe("POST /reset-password/:id/:token", ()=>{
 
 describe("PATCH /new-password/:id/:token", ()=>{ 
 
-    test.only("Success", async()=>{
+    test("Success", async()=>{
     
-        console.log(token);
-        let verify = verifyToken(token)
-        console.log(verify, "<<<<Verify");
+        // console.log(token);
+        // let verify = verifyToken(token)
+        // console.log(verify, "<<<<Verify");
         // console.log(typeof verify.id);
 
         let response = await request(app)
-        .post(`/new-password/1/${token}`)
+        .patch(`/new-password/1/${token}`)
+        .send({password : "test1"})
        
         expect(response.status).toBe(200)
         expect(response.body).toBeInstanceOf(Object)       
         expect(response.body).toHaveProperty("message", "berhasil ubah password")     
+    })
+
+    test("Invalid Token", async()=>{
+
+        let response = await request(app)
+        .patch(`/new-password/1/asdasd`)
+        .send({password : "test1"})
+       
+        expect(response.status).toBe(401)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "Invalid Token")     
+    })
+
+    test("Forbidden", async()=>{
+
+        let response = await request(app)
+        .patch(`/new-password/5/${token}`)
+        .send({password : "test1"})
+       
+        expect(response.status).toBe(403)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "Forbidden")     
+    })
+
+    test("Not sending new password", async()=>{
+
+        let response = await request(app)
+        .patch(`/new-password/5/${token}`)
+       
+        expect(response.status).toBe(400)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "Password is required")     
     })
 
 })

@@ -22,6 +22,7 @@ beforeAll( async ()=>{
             movieName : "Winnie The Po",
             price : 12000,
         })
+
     } catch (error) {
         console.log(error, "<<<<<");
     }
@@ -192,7 +193,42 @@ describe("GET /my-ticket", ()=>{
     })
 })
 
+describe("DELETE /ticket/delete/:id", ()=>{
 
+    test("Get Ticket Not loggin", async()=>{
+
+        let response = await request(app)
+        .delete("/ticket/delete/1")
+
+        expect(response.status).toBe(401)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty("message", "Invalid Token")
+    
+    })
+
+    test("Get Ticket Failed Token", async()=>{
+
+        let response = await request(app)
+        .delete("/ticket/delete/1")
+        .set("Authorization", `Bearer asdasd`)
+
+        expect(response.status).toBe(401)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty("message", "Invalid Token")
+    })
+
+    test("delete Success", async()=>{
+
+        let response = await request(app)
+        .delete("/ticket/delete/1")
+        .set("Authorization", `Bearer ${token1}`)
+
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Object)
+        
+    })
+
+})
 
 afterAll(async () =>{
     await User.destroy({truncate : true, cascade : true, restartIdentity: true})

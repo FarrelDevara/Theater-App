@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { BASE_URL } from "../constant";
 
 export const movieSlice = createSlice({
     name : "movies",
@@ -23,7 +24,7 @@ export function fetchData(){
         try {
             const {data} = await axios({
                 method:"get",
-                url: "http://localhost:3000/getMovies"
+                url: `${BASE_URL}/getMovies`
             })
             // console.log(data);
             dispatch(fetchSuccess(data))
@@ -44,7 +45,7 @@ export function fetchDataById(id){
     try {
         const {data} = await axios({
             method : "get",
-            url : "http://localhost:3000/movie/detail/" + id
+            url : `${BASE_URL}/movie/detail/` + id
         })
 
         dispatch(fetchSuccess(data))

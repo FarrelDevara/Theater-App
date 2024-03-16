@@ -17,9 +17,11 @@ useEffect(()=>{
 
     return(
         <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mt-5 mr-5 ml-5">
         {movies && movies?.results?.map((item)=>(
         <Card data={item}/>
         ))}
+        </div>
         
         </>
     )

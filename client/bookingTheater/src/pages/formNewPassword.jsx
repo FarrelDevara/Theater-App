@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { BASE_URL } from "../../constant";
 
 function NewPassword(){
     
@@ -25,7 +26,7 @@ function NewPassword(){
       try {
         const { data } = await axios({
           method: "patch",
-          url: `http://localhost:3000/new-password/${id}/${token}`,
+          url: `${BASE_URL}/new-password/${id}/${token}`,
           data: input
         });
         console.log("berhasil");
@@ -55,7 +56,7 @@ function NewPassword(){
   {/* Left: Image */}
   <div className="w-1/2 h-screen hidden lg:block">
     <img
-      src="https://placehold.co/800x/667fff/ffffff.png?text=Your+Image&font=Montserrat"
+      src="./bg.jpg"
       alt="Placeholder Image"
       className="object-cover w-full h-full"
     />

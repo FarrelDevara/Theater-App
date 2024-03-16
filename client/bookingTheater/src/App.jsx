@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import Register from './pages/register';
 import Login from './pages/login';
-import Home from './pages/nowPlaying';
 import NowPlaying from './pages/nowPlaying';
 import Detail from './pages/detail';
 import Ticket from './pages/ticket';
@@ -16,65 +15,40 @@ import {Provider} from 'react-redux'
 import store from "../store";
 import ForgetPassword from "./pages/forgetPassword";
 import NewPassword from "./pages/formNewPassword";
+
+import NavbarLogin from "./components/NavbarLogin";
 // import './App.css'
 
 const router = createBrowserRouter([
   {
-    path: "/register",
-    element: <Register/>,
+    element : <NavbarLogin/>,
     loader:() => {
       if (localStorage.access_token) {
         return redirect('/now-playing')
       }
       return null
     },
-  },
-  {
-    path: "/login",
-    element: <Login/>,
-    loader:() => {
-      if (localStorage.access_token) {
-        return redirect('/now-playing')
-      }
-      return null
-    },
-  },
-  {
-    path: "/forget-password",
-    element: <ForgetPassword/>,
-    loader:() => {
-      if (localStorage.access_token) {
-        return redirect('/now-playing')
-      }
-      return null
-    },
-  },
-  {
-    path: "/new-password/:id/:token",
-    element: <NewPassword/>,
-    loader:() => {
-      if (localStorage.access_token) {
-        return redirect('/now-playing')
-      }
-      return null
-    },
-  },
-  {
-    element : <MainLayout/>,
-    children:[
+    children : [
       {
-        path : '/',
-        element: <div>home</div>
+        path: "/register",
+        element: <Register/>,
+        
       },
       {
-        path : '/now-playing',
-        element: <NowPlaying/>
+        path: "/login",
+        element: <Login/>,
+        
       },
       {
-        path : '/movie/detail/:id',
-        element: <Detail/>
-      },
+        path: "/forget-password",
+        element: <ForgetPassword/>,
       
+      },
+      {
+        path: "/new-password/:id/:token",
+        element: <NewPassword/>,
+       
+      },
     ]
   },
   {element : <MainLayout/>,
@@ -92,6 +66,14 @@ const router = createBrowserRouter([
       {
         path : '/my-ticket',
         element: <MyTicket/>
+      },
+      {
+        path : '/',
+        element: <NowPlaying/>
+      },
+      {
+        path : '/movie/detail/:id',
+        element: <Detail/>
       },
     ]
   },

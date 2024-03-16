@@ -2,6 +2,7 @@ import { useState } from "react"
 import Swal from "sweetalert2"
 import axios from 'axios'
 import { Link, useNavigate } from "react-router-dom"
+import { BASE_URL } from "../../constant"
 
 function Register(){
     const navigate = useNavigate()
@@ -25,7 +26,7 @@ function Register(){
 
             const {data} = await axios({
                 method : "post",
-                url : "http://localhost:3000/register",
+                url : `${BASE_URL}/register`,
                 data : input
               })
             //   console.log("berhasil");
@@ -57,7 +58,7 @@ function Register(){
   {/* Left: Image */}
   <div className="w-1/2 h-screen hidden lg:block">
     <img
-      src="https://placehold.co/800x/667fff/ffffff.png?text=Your+Image&font=Montserrat"
+      src="./bg.jpg"
       alt="Placeholder Image"
       className="object-cover w-full h-full"
     />
