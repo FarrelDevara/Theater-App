@@ -8,7 +8,7 @@ const client = new OAuth2Client();
 const midtransClient = require("midtrans-client");
 
 let movieName;
-let id
+let id;
 class Controller {
   static async Register(req, res, next) {
     try {
@@ -62,7 +62,7 @@ class Controller {
     try {
       const googleToken = req.body.googleToken;
       if (!googleToken) {
-        throw {name : "InvalidToken"}
+        throw { name: "InvalidToken" };
       }
 
       const ticket = await client.verifyIdToken({
@@ -72,7 +72,7 @@ class Controller {
         // Or, if multiple clients access the backend:
         //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
       });
-      if (!ticket) throw {name : "InvalidToken"}
+      if (!ticket) throw { name: "InvalidToken" };
 
       const payload = ticket.getPayload();
 
@@ -99,71 +99,70 @@ class Controller {
     }
   }
 
-  static async forgetPassword(req,res,next){
+  static async forgetPassword(req, res, next) {
     try {
-      console.log(req.body.email);
-      const user = await User.findOne({where : {
-        email : req.body.email
-      }})
+      // console.log(req.body.email);
+      const user = await User.findOne({
+        where: {
+          email: req.body.email,
+        },
+      });
 
-      if (!user) throw {name : "InvalidEmail"}
+      if (!user) throw { name: "InvalidEmail" };
 
-      const payload = {email: user.email, id: user.id}
-      const token = signToken(payload)
+      const payload = { email: user.email, id: user.id };
+      const token = signToken(payload);
 
-      const link = `http://localhost:3000/reset-password/${user.id}/${token}`
+      const link = `http://localhost:3000/reset-password/${user.id}/${token}`;
 
-      res.status(200).json({message : link})
+      res.status(200).json({ message: link });
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
-  static async newPassword(req,res,next){
+  static async newPassword(req, res, next) {
     try {
-      const {id,token} = req.params
+      const { id, token } = req.params;
+      // console.log(typeof +id);
+      let verify = verifyToken(token);
+
+      // console.log(verify);
+      // console.log(req.body.password, "<<<<<<<<<<,passbaru");
+      if (+id !== verify.id) throw { name: "Forbidden" };
+      // console.log("masuk");
+      const user = await User.findByPk(id);
+      if (!user) throw { name: "Forbidden" };
+
+      const newPass = hashPassword(req.body.password);
+
+      const data = await user.update({ password: newPass });
+
+      res.status(200).json({ message: "berhasil ubah password" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resetPassword(req, res, next) {
+    try {
+      const { id, token } = req.params;
       // console.log(id,token);
 
-      let verify = verifyToken(token)
+      const user = await User.findOne({ where: { id } });
+      if (!user) throw { name: "InvalidEmail" };
 
-      // console.log(verify.id);
-      // console.log(req.body.password, "<<<<<<<<<<,passbaru");
-      if( id !== verify.id) throw ({name : "Forbidden"})
+      const verify = verifyToken(token);
+      // console.log("masook");
 
-      const user = await User.findByPk(verify.id)
-      if (!user) throw {name : "Forbidden"}
+      SendEmail.message(user.email, id, token);
 
-      const newPass = hashPassword(req.body.password)
-
-      const data = await user.update({password : newPass})
-
-      res.status(200).json({message : "berhasil ubah password"})
+      res.status(200).json({ message: "Check your email" });
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
-  static async resetPassword(req,res,next){
-    try {
-      const {id,token} = req.params
-      console.log(id,token);
-
-      const user = await User.findOne({where : {id}})
-      if (!user) throw {name : "InvalidEmail"}
-
-      const verify = verifyToken(token)
-      console.log("masook");
-
-      SendEmail.message(user.email,id,token)
-
-      res.status(200).json({message : "redirect"})
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  
-  
   static async fetchMovies(req, res, next) {
     try {
       const { data } = await axios({
@@ -176,7 +175,7 @@ class Controller {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODczNzY0YWUxY2ViZWJhYzI2ODc0ZTI3Y2RmOTEyMCIsInN1YiI6IjY1ZjE1YmY2NDcwZWFkMDE3ZTljYmM2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0StnX-MY-PfPmh8s5Nj-Oya98d8xdI_6FBS9CEVTOlQ",
         },
       });
-      if (!data) throw {name : "InvalidToken"}
+      if (!data) throw { name: "InvalidToken" };
       // console.log(data);
       res.status(200).json(data);
     } catch (error) {
@@ -202,7 +201,7 @@ class Controller {
       });
       data.poster_path = `https://image.tmdb.org/t/p/w500` + data.poster_path;
       // console.log(data);
-      movieName = data.title
+      movieName = data.title;
       // console.log(movieName);
       res.status(200).json(data);
     } catch (error) {
@@ -216,11 +215,11 @@ class Controller {
       // console.log(req.user.id);
 
       const ticket = await Ticket.findAll({
-        where : {
-          UserId : req.user.id
-        }
-      })
-      if (!ticket) throw {name : "Invalid Token"}
+        where: {
+          UserId: req.user.id,
+        },
+      });
+      if (!ticket) throw { name: "Invalid Token" };
       // console.log(ticket);
 
       res.status(200).json(ticket);
@@ -244,39 +243,37 @@ class Controller {
     }
   }
 
-  static async createTicket(req,res,next){
+  static async createTicket(req, res, next) {
     // console.log(req.user);
     // console.log(movieName, "<<<moviename");
     // console.log(id, "<<<<params");
     // console.log(req.params.id);
     try {
       const ticket = await Ticket.create({
-        MovieId : req.params.id,
-        UserId : req.user.id,
-        movieName : movieName,
-        price : 45000
-      })
+        MovieId: req.params.id,
+        UserId: req.user.id,
+        movieName: movieName,
+        price: 45000,
+      });
       console.log(ticket);
-     res.status(201).json(ticket)
+      res.status(201).json(ticket);
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
-  static async getTicket(req,res,next){
+  static async getTicket(req, res, next) {
     try {
-      const ticket = await Ticket.findByPk(req.params.id)
-      if(!ticket) throw {name : "notFound"}
-      res.status(200).json(ticket)
+      const ticket = await Ticket.findByPk(req.params.id);
+      if (!ticket) throw { name: "notFound" };
+      res.status(200).json(ticket);
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
   static async initiatePayment(req, res, next) {
-    
     try {
-
       ////////////////////////////////////////////////////////////////////////////////////
       let snap = new midtransClient.Snap({
         // Set to true if you want Production Environment (accept real transaction).
@@ -284,8 +281,7 @@ class Controller {
         serverKey: "SB-Mid-server-Qae5O6HkfLFJ1fDQgS76RVdw",
       });
 
-
-      const order_id = Math.random().toString()
+      const order_id = Math.random().toString();
       let parameter = {
         //data detail order
         transaction_details: {
@@ -304,10 +300,12 @@ class Controller {
         },
       };
 
-      const transaction = await snap.createTransaction(parameter)
-      let transactionToken = transaction.token
+      const transaction = await snap.createTransaction(parameter);
+      let transactionToken = transaction.token;
 
-      res.status(200).json({message : "Order created", transactionToken, order_id})
+      res
+        .status(200)
+        .json({ message: "Order created", transactionToken, order_id });
     } catch (error) {
       next(error);
     }
@@ -315,19 +313,32 @@ class Controller {
 
   static async updatePayment(req, res, next) {
     try {
-        // console.log(req.params.id);
-        // const {order_id} = req.body
-        // console.log("masuk?");
-        const ticket = await Ticket.findByPk(req.params.id)
-        if (ticket.paymentStatus === true) throw {name : "AlreadyPaid"}
+      // console.log(req.params.id);
+      // const {order_id} = req.body
+      // console.log("masuk?");
+      const ticket = await Ticket.findByPk(req.params.id);
+      if (ticket.paymentStatus === true) throw { name: "AlreadyPaid" };
+      console.log("////////////////////////////////////////////");
 
-        await Ticket.update({paymentStatus : true}, {
-          where : {
-            id : req.params.id
+      await Ticket.update(
+        { paymentStatus: true },
+        {
+          where: {
+            id: req.params.id,
+          },
         }
-      })
+      );
 
-      res.status(201).json({message : "Pembayaran berhasil"})
+      const data = await Ticket.findByPk(req.params.id)
+
+      console.log(data, "<<<<<<<<<<<<<<<<DATA");
+
+      const user = await User.findOne({ where: { id: data.UserId } });
+      if (!user) throw { name: "InvalidEmail" };
+        console.log(user);
+      SendEmail.afterPayment(user.email, data.movieName);
+
+      res.status(201).json({ message: "Pembayaran berhasil" });
     } catch (error) {
       next(error);
     }

@@ -30,6 +30,13 @@ function ForgetPassword(){
         console.log("berhasil");
         console.log(data);
         // navigate("/");
+
+        Swal.fire({
+            title: "Click ",
+            text: data.message,
+            icon: "success",
+            confirmButtonText: "Cool",
+          });
       } catch (error) {
         console.log(error);
   
@@ -86,7 +93,11 @@ function ForgetPassword(){
       </Link>
     </div>
     <div className="text-center mt-3"> -OR-</div>
-    <div id="buttonDiv" className="flex items-center justify-center mt-3"></div>
+    <div className="mt-3 text-blue-500 text-center">
+      <Link to={"/login"} className="hover:underline">
+        Login Here
+      </Link>
+    </div>
   </div>
   </div>
 

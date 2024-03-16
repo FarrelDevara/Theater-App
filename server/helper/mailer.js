@@ -27,6 +27,23 @@ class SendEmail {
       }
     });
   }
+
+  static afterPayment(emailSend, movieName) {
+    let mailOption = {
+      from: 'farrel.mailer@gmail.com',
+      to: emailSend,
+      subject: 'Wadidaw Theater Payment',
+      text: `Thank you for purchasing tickets for the film ${movieName}`,
+    };
+    this.transPorter().sendMail(mailOption, (err, info) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(info.response);
+      }
+    });
+  }
+
 }
 
 module.exports = SendEmail;

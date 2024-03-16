@@ -5,7 +5,6 @@ const { authentication } = require("../middlewares/authentication");
 const { authorization, authForgetPass } = require("../middlewares/authorization");
 
 router.post("/register", Controller.Register);
-
 router.post("/login", Controller.Login);
 
 router.post("/forget-password", Controller.forgetPassword);

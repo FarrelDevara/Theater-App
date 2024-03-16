@@ -53,17 +53,6 @@ function Register(){
     }
     return(
         <>
-        <div>
-            <form action="" onSubmit={submitInput}>
-                <label htmlFor="">Username</label>
-                <input type="text" name="username" id="" onChange={handleInput}/>
-                <label htmlFor="">Email</label>
-                <input type="email" name="email" id="" onChange={handleInput}/>
-                <label htmlFor="">Password</label>
-                <input type="password" name="password" id="" onChange={handleInput}/>
-                <button type="submit">Register</button>
-            </form>
-        </div>
         <div className="bg-gray-100 flex justify-center items-center h-screen">
   {/* Left: Image */}
   <div className="w-1/2 h-screen hidden lg:block">
@@ -134,8 +123,6 @@ function Register(){
        Login here
       </Link>
     </div>
-    <div className="text-center mt-3"> -OR-</div>
-    <div id="buttonDiv"></div>
   </div>
     
 </div>
