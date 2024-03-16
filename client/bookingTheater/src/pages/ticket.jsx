@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchTicketById } from "../../store/ticketSlice";
 import { fetchDataById } from "../../store/movieSlice";
 import { BASE_URL } from "../../constant";
+import Swal from "sweetalert2";
 function Ticket() {
   const { ticketId } = useParams();
   const navigate = useNavigate();
@@ -30,7 +31,13 @@ function Ticket() {
     window.snap.pay(data.transactionToken, {
       onSuccess: async function (result) {
         /* You may add your own implementation here */
-        alert("payment success!");
+        Swal.fire({
+          title: "Success!",
+          text: "Payment Success",
+          icon: "success",
+          confirmButtonText: "Cool",
+        });
+
         console.log(result);
 
         await axios({
@@ -44,17 +51,32 @@ function Ticket() {
       },
       onPending: function (result) {
         /* You may add your own implementation here */
-        alert("wating your payment!");
+        Swal.fire({
+          title: "Close!",
+          text: "waiting your payment!",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
         console.log(result);
       },
       onError: function (result) {
         /* You may add your own implementation here */
-        alert("payment failed!");
         console.log(result);
+        Swal.fire({
+          title: "Close!",
+          text: "payment failed!",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
       },
       onClose: function () {
         /* You may add your own implementation here */
-        alert("you closed the popup without finishing the payment");
+        Swal.fire({
+          title: "Close!",
+          text: "you closed the popup without finishing the payment",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
       },
     });
   };
@@ -118,8 +140,8 @@ function Ticket() {
               Already Paid
             </button>
           )}
+        <button className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 ml-5" onClick={deleteTicket}>Delete</button>
         </div>
-        <button onClick={deleteTicket}>Delete</button>
       </div>
     </>
   );

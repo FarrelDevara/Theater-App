@@ -6,7 +6,7 @@ class SendEmail {
       service: 'gmail',
       auth: {
         user: 'farrel.mailer@gmail.com',
-        pass: 'zduhdobniyrfxrsm',
+        pass: process.env.MAILER_PASS,
       },
     });
     return transporter;
@@ -17,7 +17,7 @@ class SendEmail {
       from: 'farrel.mailer@gmail.com',
       to: emailSend,
       subject: 'Forget Password',
-      text: `http://localhost:5173/new-password/${id}/${token}`,
+      text: `https://iproject-bc59a.web.app/${id}/${token}`,
     };
     this.transPorter().sendMail(mailOption, (err, info) => {
       if (err) {

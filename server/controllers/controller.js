@@ -173,7 +173,7 @@ class Controller {
         headers: {
           accept: "application/json",
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODczNzY0YWUxY2ViZWJhYzI2ODc0ZTI3Y2RmOTEyMCIsInN1YiI6IjY1ZjE1YmY2NDcwZWFkMDE3ZTljYmM2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0StnX-MY-PfPmh8s5Nj-Oya98d8xdI_6FBS9CEVTOlQ",
+            "Bearer " + process.env.API_KEY,
         },
       });
 
@@ -202,7 +202,7 @@ class Controller {
         headers: {
           accept: "application/json",
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlODczNzY0YWUxY2ViZWJhYzI2ODc0ZTI3Y2RmOTEyMCIsInN1YiI6IjY1ZjE1YmY2NDcwZWFkMDE3ZTljYmM2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0StnX-MY-PfPmh8s5Nj-Oya98d8xdI_6FBS9CEVTOlQ",
+            "Bearer " + process.env.API_KEY,
         },
       });
       data.poster_path = `https://image.tmdb.org/t/p/w500` + data.poster_path;
@@ -294,7 +294,7 @@ class Controller {
       let snap = new midtransClient.Snap({
         // Set to true if you want Production Environment (accept real transaction).
         isProduction: false,
-        serverKey: "SB-Mid-server-Qae5O6HkfLFJ1fDQgS76RVdw",
+        serverKey: process.env.SERVER_KEY,
       });
 
       const order_id = Math.random().toString();
