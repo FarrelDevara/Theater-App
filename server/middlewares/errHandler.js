@@ -17,6 +17,12 @@ const errHandler = (error, req, res, next) => {
     case "PasswordRequired":
       res.status(400).json({ message: "Password is required" });
       break;
+    case "AlreadyPaid":
+      res.status(400).json({ message: "Already Paid" });
+      break;
+    case "CantDelete":
+        res.status(400).json({ message: "Cant delete Payed Ticket" });
+        break;
     case "InvalidEmail":
       res.status(401).json({ message: "Invalid Email" });
       break;
@@ -29,6 +35,7 @@ const errHandler = (error, req, res, next) => {
     case "Forbidden":
       res.status(403).json({ message: "Forbidden" });
       break;
+     
     case "notFound":
       res.status(404).json({ message: "Not Found" });
       break;

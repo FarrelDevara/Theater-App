@@ -231,13 +231,19 @@ class Controller {
 
   static async deleteTicket(req, res, next) {
     try {
-      const ticket = await Ticket.delete({
+
+      const findTicket = await Ticket.findByPk(req.params.id)
+      if (findTicket.paymentStatus === true) {
+        throw {name : "CantDelete"}
+      }
+
+      await Ticket.delete({
         where: {
           id: req.params.id,
         },
       });
 
-      res.status(200).json({ message: "Ticket has been deleted" });
+      res.status(200).json({ message: `Ticket for ${findTicket.movieName} has been deleted` });
     } catch (error) {
       next(error);
     }
@@ -318,7 +324,7 @@ class Controller {
       // console.log("masuk?");
       const ticket = await Ticket.findByPk(req.params.id);
       if (ticket.paymentStatus === true) throw { name: "AlreadyPaid" };
-      console.log("////////////////////////////////////////////");
+      // console.log("////////////////////////////////////////////");
 
       await Ticket.update(
         { paymentStatus: true },
@@ -331,7 +337,7 @@ class Controller {
 
       const data = await Ticket.findByPk(req.params.id)
 
-      console.log(data, "<<<<<<<<<<<<<<<<DATA");
+      // console.log(data, "<<<<<<<<<<<<<<<<DATA");
 
       const user = await User.findOne({ where: { id: data.UserId } });
       if (!user) throw { name: "InvalidEmail" };
