@@ -136,9 +136,9 @@ function Login() {
       </div>
       {/* Forgot Password Link */}
       <div className="mb-6 text-blue-500">
-        <a href="#" className="hover:underline">
+        <Link to={'/forget-password'} className="hover:underline">
           Forgot Password?
-        </a>
+        </Link>
       </div>
       {/* Login Button */}
       <button

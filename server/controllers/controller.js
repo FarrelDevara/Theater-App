@@ -1,5 +1,6 @@
-const { comparePassword } = require("../helper/bcrypt");
-const { signToken } = require("../helper/jwt");
+const { comparePassword, hashPassword } = require("../helper/bcrypt");
+const { signToken, verifyToken } = require("../helper/jwt");
+const SendEmail = require("../helper/mailer");
 const { User, Ticket } = require("../models");
 const axios = require("axios");
 const { OAuth2Client } = require("google-auth-library");
@@ -97,6 +98,71 @@ class Controller {
       next(error);
     }
   }
+
+  static async forgetPassword(req,res,next){
+    try {
+      console.log(req.body.email);
+      const user = await User.findOne({where : {
+        email : req.body.email
+      }})
+
+      if (!user) throw {name : "InvalidEmail"}
+
+      const payload = {email: user.email, id: user.id}
+      const token = signToken(payload)
+
+      const link = `http://localhost:3000/reset-password/${user.id}/${token}`
+
+      res.status(200).json({message : link})
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async newPassword(req,res,next){
+    try {
+      const {id,token} = req.params
+      // console.log(id,token);
+
+      let verify = verifyToken(token)
+
+      // console.log(verify.id);
+      // console.log(req.body.password, "<<<<<<<<<<,passbaru");
+      if( id !== verify.id) throw ({name : "Forbidden"})
+
+      const user = await User.findByPk(verify.id)
+      if (!user) throw {name : "Forbidden"}
+
+      const newPass = hashPassword(req.body.password)
+
+      const data = await user.update({password : newPass})
+
+      res.status(200).json({message : "berhasil ubah password"})
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async resetPassword(req,res,next){
+    try {
+      const {id,token} = req.params
+      console.log(id,token);
+
+      const user = await User.findOne({where : {id}})
+      if (!user) throw {name : "InvalidEmail"}
+
+      const verify = verifyToken(token)
+      console.log("masook");
+
+      SendEmail.message(user.email,id,token)
+
+      res.status(200).json({message : "redirect"})
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  
   
   static async fetchMovies(req, res, next) {
     try {

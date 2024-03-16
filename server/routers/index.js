@@ -2,11 +2,15 @@ const express = require("express");
 const router = express.Router();
 const Controller = require("../controllers/controller");
 const { authentication } = require("../middlewares/authentication");
-const { authorization } = require("../middlewares/authorization");
+const { authorization, authForgetPass } = require("../middlewares/authorization");
 
 router.post("/register", Controller.Register);
 
 router.post("/login", Controller.Login);
+
+router.post("/forget-password", Controller.forgetPassword);
+router.get('/reset-password/:id/:token', Controller.resetPassword)
+router.patch('/new-password/:id/:token', Controller.newPassword)
 
 router.post('/google-login', Controller.googleLogin)
 

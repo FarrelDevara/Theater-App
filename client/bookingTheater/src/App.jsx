@@ -14,6 +14,8 @@ import MainLayout from './components/MainLayout';
 import MyTicket from './pages/myTicket';
 import {Provider} from 'react-redux'
 import store from "../store";
+import ForgetPassword from "./pages/forgetPassword";
+import NewPassword from "./pages/formNewPassword";
 // import './App.css'
 
 const router = createBrowserRouter([
@@ -36,8 +38,26 @@ const router = createBrowserRouter([
       }
       return null
     },
-    
-    
+  },
+  {
+    path: "/forget-password",
+    element: <ForgetPassword/>,
+    loader:() => {
+      if (localStorage.access_token) {
+        return redirect('/now-playing')
+      }
+      return null
+    },
+  },
+  {
+    path: "/new-password/:id/:token",
+    element: <NewPassword/>,
+    loader:() => {
+      if (localStorage.access_token) {
+        return redirect('/now-playing')
+      }
+      return null
+    },
   },
   {
     element : <MainLayout/>,
