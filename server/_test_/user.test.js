@@ -1,4 +1,4 @@
-const { signToken } = require('../helper/jwt');
+const { signToken, verifyToken } = require('../helper/jwt');
 const {User, Ticket} = require('../models')
 const request = require('supertest')
 const app = require('../app')
@@ -10,6 +10,7 @@ beforeAll( async ()=>{
             email : "admin@mail.com",
             password : "admin",
         })
+        console.log(user.id, "<<<<<<<<<<<");
 
         token = signToken( {id : user.id})
         // console.log(user); 
@@ -106,7 +107,6 @@ describe("POST /login", ()=>{
         expect(response.body).toHaveProperty("message", "Invalid Email/Password")
     })
 })
-
 
 describe("POST /register", ()=>{
     test("Add User Success", async()=>{
@@ -235,7 +235,97 @@ describe("POST /goggle-login", ()=>{
     })
 
 })
+
+describe("POST /forget-password", ()=>{ 
+
+    test("Forget Password", async()=>{
+    
+        const dummy = {
+            email : "admin@mail.com"
+        }
+        // console.log(token, "<<<<<<<<<<<<");
+        let response = await request(app)
+        .post("/forget-password")
+        .send(dummy)
+
+        // console.log(response.body);
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", expect.any(String))     
+    })
+
+    test("Forget Password wrong email", async()=>{
+    
+        const dummy = {
+            email : "user1"
+        }
+
+        let response = await request(app)
+        .post("/forget-password")
+        .send(dummy)
+
+        expect(response.status).toBe(401)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "Invalid Email")     
+    })
+
+    test("Forget Password Doesnt provide email", async()=>{
+    
+        const dummy = {
+            email : "user1@mail.com"
+        }
+
+        let response = await request(app)
+        .post("/forget-password")
+
+        expect(response.status).toBe(500)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "Internal Server Error")     
+    })
+})
+
+
+describe("POST /reset-password/:id/:token", ()=>{ 
+
+    test("Invalid Token", async()=>{
+    
+        // console.log(token);
+        // let verify = verifyToken(token)
+        // console.log(verify.id, "<<<<Verify");
+        // console.log(typeof verify.id);
+
+        let response = await request(app)
+        .post(`/reset-password/1/${token}`)
+        // .send(dummy)
+        
+        // console.log(response.body);
+        expect(response.status).toBe(401)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "Invalid Token")     
+    })
+
+})
+
+describe("PATCH /new-password/:id/:token", ()=>{ 
+
+    test.only("Success", async()=>{
+    
+        console.log(token);
+        let verify = verifyToken(token)
+        console.log(verify, "<<<<Verify");
+        // console.log(typeof verify.id);
+
+        let response = await request(app)
+        .post(`/new-password/1/${token}`)
+       
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Object)       
+        expect(response.body).toHaveProperty("message", "berhasil ubah password")     
+    })
+
+})
+
+
 afterAll(async () =>{
     await User.destroy({truncate : true, cascade : true, restartIdentity: true})
-
 })
