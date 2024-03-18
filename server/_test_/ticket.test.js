@@ -1,7 +1,11 @@
-const { signToken } = require('../helper/jwt');
+
 const {User, Ticket} = require('../models')
 const request = require('supertest')
-const app = require('../app')
+const app = require('../app');
+const { signToken } = require('../helper/jwt');
+
+let token1;
+let token2;
 
 beforeAll( async ()=>{
     try {
@@ -15,6 +19,7 @@ beforeAll( async ()=>{
 
         token1 = signToken( {id : user[0].id})
         token2 = signToken( {id : user[1].id})
+        console.log(token1, "<<<<<<<<<<<<<");
 
         const ticket = await Ticket.create({
             MovieId : 1000,
@@ -39,6 +44,7 @@ describe("POST /create-ticket/:id", ()=>{
             movieName : "Winnie The Po",
             price : 12000,
             }
+
         console.log(dummy);
 
         let response = await request(app)

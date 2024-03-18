@@ -674,6 +674,31 @@ _Response (403 - forbidden)_
 
 
 &nbsp;
+<<<<<<< HEAD
+
+
+## Global Error
+
+_Response (401 - Unauthorized)_
+
+```json
+{
+  "message": "Invalid token"
+}
+OR
+{
+  "message": "Invalid email/password"
+}
+```
+_Response (500 - Internal Server Error)_
+
+```json
+{
+  "message": "Internal server error"
+}
+```
+=======
 =======
 &nbsp;
 
+>>>>>>> 88f93abb27948ad16f37e618bb982759798b7e1b

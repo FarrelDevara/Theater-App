@@ -17,7 +17,7 @@ class SendEmail {
       from: 'farrel.mailer@gmail.com',
       to: emailSend,
       subject: 'Forget Password',
-      text: `https://iproject-bc59a.web.app/${id}/${token}`,
+      text: `https://client-iproject.farreldevara.online/new-password/${id}/${token}`,
     };
     this.transPorter().sendMail(mailOption, (err, info) => {
       if (err) {
