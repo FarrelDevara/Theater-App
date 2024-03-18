@@ -31,12 +31,16 @@ function NewPassword(){
         });
         console.log("berhasil");
         // navigate("/");
+        
         Swal.fire({
             title: "success!",
             text: "berhasil ubah passowrd",
             icon: "success",
             confirmButtonText: "Cool",
           });
+          
+          navigate("/login");
+          
       } catch (error) {
         console.log(error);
   
